@@ -5,7 +5,11 @@ import { BrowseComponent } from './modules/browse/browse.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/browse', pathMatch: 'full' },
-  { path: 'browse', component: BrowseComponent },
+  {
+    path: 'browse',
+    loadChildren: () =>
+      import('./modules/browse/browse.module').then(m => m.BrowseModule),
+  },
 ];
 
 @NgModule({

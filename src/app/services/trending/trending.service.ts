@@ -10,10 +10,10 @@ export class TrendingService {
   constructor(private http: HttpClient) {}
 
   getMovies() {
-    return this.http.get<{}>(`${this.trendingUrl}/movie/day?language=en-US`);
+    return this.http.get<any>(`${this.trendingUrl}/movie/day?language=en-US`);
   }
 
-  getTVSeries() {
-    return this.http.get<{}>(`${this.trendingUrl}/tv/day?language=en-US`);
+  getTVShows() {
+    return this.http.get<any>(`${this.trendingUrl}/tv/day?language=en-US`);
   }
 }
