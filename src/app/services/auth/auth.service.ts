@@ -9,7 +9,7 @@ export class AuthService {
     'https://api.themoviedb.org/3/authentication';
   private readonly authenticateUrl = 'https://www.themoviedb.org/authenticate';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   createRequestToken() {
     return this.http.get<any>(`${this.authenticationUrl}/token/new`);

@@ -6,9 +6,23 @@ import { BrowseRoutingModule } from './browse-routing.module';
 import { BrowseComponent } from './browse.component';
 import { TrendingMoviesComponent } from './components/trending-movies/trending-movies.component';
 import { TrendingTvShowsComponent } from './components/trending-tv-shows/trending-tv-shows.component';
+import { MatIconModule } from '@angular/material/icon';
+import { ResultsComponent } from './components/results/results.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [BrowseComponent, TrendingMoviesComponent, TrendingTvShowsComponent],
-  imports: [CommonModule, BrowseRoutingModule, MatGridListModule],
+  declarations: [
+    BrowseComponent,
+    TrendingMoviesComponent,
+    TrendingTvShowsComponent,
+    ResultsComponent,
+  ],
+  imports: [
+    CommonModule,
+    BrowseRoutingModule,
+    ReactiveFormsModule,
+    MatGridListModule,
+    MatIconModule,
+  ],
 })
 export class BrowseModule {}

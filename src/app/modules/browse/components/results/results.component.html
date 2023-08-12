@@ -1,13 +1,17 @@
 <div class="flex flex-wrap w-full h-full justify-center gap-x-4 gap-y-4">
   <div
-    class="flex flex-col flex-[0_0_18%] bg-zinc-700 rounded-md"
-    *ngFor="let trendingTVShow of trendingTVShows">
+    class="flex flex-col flex-[0_0_45%] sm:flex-[0_0_30%] lg:flex-[0_0_18%] bg-zinc-700 rounded-md"
+    *ngFor="let result of results">
+    <div
+      *ngIf="!result.poster_path"
+      class="flex h-full w-full bg-zinc-800 animate-pulse items-center justify-center"></div>
     <img
+      *ngIf="result.poster_path"
       class="w-full rounded-t-md"
-      [src]="trendingTVShow.poster_path"
+      [src]="result.poster_path"
       alt="" />
     <div class="flex justify-between items-center p-2">
-      <span class="font-semibold">{{ trendingTVShow.name }}</span>
+      <span class="font-semibold">{{ result.title }}</span>
       <button>
         <mat-icon
           class="material-icons-outlined"

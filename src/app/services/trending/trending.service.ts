@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class TrendingService {
   private readonly trendingUrl = 'https://api.themoviedb.org/3/trending';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getMovies() {
     return this.http.get<any>(`${this.trendingUrl}/movie/day?language=en-US`);
