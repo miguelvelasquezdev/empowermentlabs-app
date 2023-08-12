@@ -14,7 +14,7 @@ export class TrendingMoviesComponent implements OnInit {
 
   constructor(private readonly trendingService: TrendingService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.trendingService
       .getMovies()
       .pipe(

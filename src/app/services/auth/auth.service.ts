@@ -12,11 +12,11 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   createRequestToken() {
-    return this.http.get(`${this.authenticationUrl}/token/new`);
+    return this.http.get<any>(`${this.authenticationUrl}/token/new`);
   }
 
   createSession(request_token: string) {
-    return this.http.post<{}>(`${this.authenticationUrl}/session/new`, {
+    return this.http.post<any>(`${this.authenticationUrl}/session/new`, {
       request_token,
     });
   }

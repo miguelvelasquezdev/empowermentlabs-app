@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MoviesService } from './services/movies/movies.service';
-import { TrendingService } from './services/trending/trending.service';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
