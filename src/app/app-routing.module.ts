@@ -1,7 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+import { BrowseComponent } from './modules/browse/browse.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: '/browse', pathMatch: 'full' },
+  { path: 'browse', component: BrowseComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
