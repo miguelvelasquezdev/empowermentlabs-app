@@ -8,9 +8,10 @@
         aria-label="Example home icon"
         fontIcon="search"></mat-icon>
       <input
+        placeholder="Search a Movie or a TV Show"
         [formControl]="search"
         type="text"
-        class="bg-transparent outline-none w-full" />
+        class="bg-transparent outline-none w-full font-medium" />
     </div>
   </div>
   <div *ngIf="!search.value?.length" class="flex flex-col w-full">

@@ -31,7 +31,6 @@ export class DetailComponent implements OnInit {
           })
         )
         .subscribe(detail => {
-          console.log(detail, 'detail');
           this.detail = detail;
         });
     });

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map } from 'rxjs';
+import { flatMap, map, merge, mergeMap, toArray } from 'rxjs';
 import {
   AccountService,
   type Favorite,
@@ -28,22 +28,35 @@ export class TrendingMoviesComponent implements OnInit {
         map(data => {
           data.results.forEach((trendingMovie: any) => {
             trendingMovie.poster_path = `${this.imagesUrl}/${trendingMovie.poster_path}`;
+            trendingMovie.favorite = false;
           });
-          console.log(data);
           return data;
-        })
+        }),
+        mergeMap(data =>
+          this.accountService.getFavoriteMovies().pipe(
+            map(favorites => {
+              favorites.results.forEach((favorite: any) => {
+                const movie = data.results.find(
+                  (movie: any) => movie.id === favorite.id
+                );
+                if (movie) {
+                  movie.favorite = true;
+                }
+              });
+              return data;
+            })
+          )
+        )
       )
-      .subscribe(data => {
-        this.trendingMovies = data.results;
-      });
+      .subscribe(data => (this.trendingMovies = data.results));
   }
 
   favoriteMovie(movie: any) {
-    console.log(movie, 'movie');
+    movie.favorite = !movie.favorite;
     const favorite = {
       media_id: movie.id,
       media_type: movie.media_type,
-      favorite: true, // todo
+      favorite: movie.favorite, // todo
     };
     this.accountService.addFavorite(favorite).subscribe(data => {});
   }

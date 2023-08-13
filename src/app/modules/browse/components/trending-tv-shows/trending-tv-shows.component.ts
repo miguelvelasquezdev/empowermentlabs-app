@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { map } from 'rxjs';
+import { map, mergeMap } from 'rxjs';
+import { AccountService } from 'src/app/services/account/account.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,7 +13,10 @@ export class TrendingTvShowsComponent implements OnInit {
   trendingTVShows: any[] = [];
   imagesUrl = environment.imagesUrl;
 
-  constructor(private trendingService: TrendingService) {}
+  constructor(
+    private trendingService: TrendingService,
+    private accountService: AccountService
+  ) {}
 
   ngOnInit() {
     this.trendingService
@@ -22,12 +26,36 @@ export class TrendingTvShowsComponent implements OnInit {
           data.results.forEach((trendingTVShow: any) => {
             trendingTVShow.poster_path = `${this.imagesUrl}/${trendingTVShow.poster_path}`;
           });
-          console.log(data);
           return data;
-        })
+        }),
+        mergeMap(data =>
+          this.accountService.getFavoriteTVShows().pipe(
+            map(favorites => {
+              favorites.results.forEach((favorite: any) => {
+                const movie = data.results.find(
+                  (movie: any) => movie.id === favorite.id
+                );
+                if (movie) {
+                  movie.favorite = true;
+                }
+              });
+              return data;
+            })
+          )
+        )
       )
       .subscribe(data => {
         this.trendingTVShows = data.results;
       });
+  }
+
+  favoriteMovie(movie: any) {
+    movie.favorite = !movie.favorite;
+    const favorite = {
+      media_id: movie.id,
+      media_type: movie.media_type,
+      favorite: movie.favorite, // todo
+    };
+    this.accountService.addFavorite(favorite).subscribe(data => {});
   }
 }

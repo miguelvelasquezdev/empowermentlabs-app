@@ -1,5 +1,6 @@
 <div class="flex flex-wrap w-full h-full justify-center gap-x-4 gap-y-4">
   <div
+    [routerLink]="['/detail/', result.id]"
     class="flex flex-col flex-[0_0_45%] sm:flex-[0_0_30%] lg:flex-[0_0_18%] bg-zinc-700 rounded-md"
     *ngFor="let result of results">
     <div
@@ -12,12 +13,23 @@
       alt="" />
     <div class="flex justify-between items-center p-2">
       <span class="font-semibold">{{ result.title }}</span>
-      <button>
+      <button
+        *ngIf="!result.favorite"
+        (click)="favoriteMovie(result); $event.stopPropagation()">
         <mat-icon
           class="material-icons-outlined"
           aria-hidden="false"
           aria-label="Example home icon"
           fontIcon="star_outlined"></mat-icon>
+      </button>
+      <button
+        *ngIf="result.favorite"
+        (click)="favoriteMovie(result); $event.stopPropagation()">
+        <mat-icon
+          class="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="Example home icon"
+          fontIcon="star"></mat-icon>
       </button>
     </div>
   </div>

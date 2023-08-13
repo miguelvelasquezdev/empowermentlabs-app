@@ -14,4 +14,10 @@ export class SearchService {
       `${this.searchUrl}/movie?query=${query}&language=en-US&page=1`
     );
   }
+
+  searchTVShows(query: string) {
+    return this.http.get<any>(
+      `${this.searchUrl}/tv?query=${query}&language=en-US&page=1`
+    );
+  }
 }
