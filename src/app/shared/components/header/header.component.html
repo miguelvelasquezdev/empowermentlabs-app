@@ -3,12 +3,12 @@
   <a href="/browse" class="text-2xl font-semibold">Empowerment Labs App</a>
   <span class="example-spacer"></span>
   <button
-    *ngIf="!sessionId"
-    (click)="askPermission()"
+    *ngIf="!guestSessionId"
+    (click)="signInAsGuest()"
     class="text-md cursor-pointer">
     Sign In
   </button>
-  <a *ngIf="sessionId" href="/account">
+  <a *ngIf="guestSessionId" href="/account">
     <mat-icon
       aria-hidden="false"
       aria-label="Example home icon"

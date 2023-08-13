@@ -7,8 +7,8 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
-  sessionId: string | null = '';
+export class HeaderComponent {
+  guestSessionId: string | null = '';
 
   constructor(
     private readonly authService: AuthService,
@@ -18,29 +18,16 @@ export class HeaderComponent implements OnInit {
     this.activateRoute.paramMap.subscribe(obs => {
       console.log(obs.get('request_token'), 'query');
     });
-    this.sessionId = localStorage.getItem('session_id');
+    this.guestSessionId = localStorage.getItem('guest_session_id');
   }
 
-  ngOnInit() {
-    this.activateRoute.queryParams.subscribe(query => {
-      const requestToken = query['request_token'];
-
-      if (requestToken) {
-        this.authService.createSession(requestToken).subscribe(data => {
-          console.log(data, 'session');
-          if (!localStorage.getItem('session_id')) {
-            localStorage.setItem('session_id', data.session_id);
-            this.sessionId = data.session_id;
-          }
-        });
-      }
-    });
-  }
-
-  askPermission() {
-    this.authService.createRequestToken().subscribe(async data => {
+  signInAsGuest() {
+    this.authService.createGuestSession().subscribe(async data => {
       console.log(data, 'data???????');
-      window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=https://localhost:4200`;
+      if (!localStorage.getItem('guest_session_id')) {
+        localStorage.setItem('guest_session_id', data.session_id);
+        this.guestSessionId = data.guest_session_id;
+      }
     });
   }
 }

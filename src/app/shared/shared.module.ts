@@ -4,9 +4,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 
 import { HeaderComponent } from './components/header/header.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
-  declarations: [HeaderComponent],
+  declarations: [HeaderComponent, NotFoundComponent],
   imports: [CommonModule, MatToolbarModule, MatIconModule],
   exports: [HeaderComponent],
 })

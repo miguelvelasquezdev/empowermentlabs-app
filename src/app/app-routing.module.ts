@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/browse', pathMatch: 'full' },
@@ -8,6 +9,17 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/browse/browse.module').then(m => m.BrowseModule),
   },
+  {
+    path: 'account',
+    loadChildren: () =>
+      import('./modules/account/account.module').then(m => m.AccountModule),
+  },
+  {
+    path: 'detail/:id',
+    loadChildren: () =>
+      import('./modules/detail/detail.module').then(m => m.DetailModule),
+  },
+  { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
@@ -6,14 +6,8 @@ import { AuthService } from './services/auth/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'empowermentlabs-movies';
 
   constructor(private authService: AuthService) {}
-
-  ngOnInit() {
-    this.authService.createRequestToken().subscribe(async (data: any) => {
-      console.log(data.request_token, 'data');
-    });
-  }
 }

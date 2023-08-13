@@ -1,0 +1,42 @@
+<div class="flex flex-col w-full h-full bg-zinc-800 gap-y-">
+  <div
+    *ngIf="detail"
+    class="relative inline-block overflow-hidden w-full h-[30vh] md:h-[60vh]">
+    <div class="absolute flex justify-between w-full h-full z-10 p-4 gap-x-4">
+      <img
+        class="relative w-1/3 h-auto object-cover"
+        [src]="detail.poster_path"
+        alt="" />
+      <div class="relative w-full flex flex-col p-2">
+        <div class="flex w-full">
+          <h1 class="text-start font-semibold text-4xl">{{ detail.title }}</h1>
+        </div>
+        <div>
+          <h2>Overview</h2>
+          <p>{{ detail.overview }}</p>
+        </div>
+      </div>
+    </div>
+    <img
+      class="absolute w-full h-full object-cover blur-lg"
+      [src]="detail.backdrop_path"
+      alt="" />
+  </div>
+
+  <div class="flex flex-col w-full h-full pt-8 p-4 gap-y-2">
+    <span class="font-semibold text-2xl">Add Note</span>
+    <textarea
+      rows="5"
+      class="p-2 rounded-md bg-transparent border border-zinc-600 outline-none resize-none"
+      type="text"></textarea>
+    <div class="flex w-full justify-center">
+      <button class="bg-white font-semibold text-black rounded-md p-2">
+        Add Note
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="false" class="flex flex-col w-full items-center p-4">
+    <span class="text-2xl font-semibold">Notes</span>
+  </div>
+</div>

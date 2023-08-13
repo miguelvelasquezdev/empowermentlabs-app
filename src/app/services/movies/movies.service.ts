@@ -7,13 +7,11 @@ import { catchError, retry } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class MoviesService {
-  moviesUrl = 'https://api.themoviedb.org/3';
+  moviesUrl = 'https://api.themoviedb.org/3/movie';
 
   constructor(private http: HttpClient) {}
 
-  getAllMovies() {
-    return this.http.get<{}>(
-      `${this.moviesUrl}/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc`
-    );
+  getMovie(id: string) {
+    return this.http.get<any>(`${this.moviesUrl}/${id}?language=en-US`);
   }
 }

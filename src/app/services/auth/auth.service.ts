@@ -11,13 +11,7 @@ export class AuthService {
 
   constructor(private readonly http: HttpClient) {}
 
-  createRequestToken() {
-    return this.http.get<any>(`${this.authenticationUrl}/token/new`);
-  }
-
-  createSession(request_token: string) {
-    return this.http.post<any>(`${this.authenticationUrl}/session/new`, {
-      request_token,
-    });
+  createGuestSession() {
+    return this.http.get<any>(`${this.authenticationUrl}/guest_session/new`);
   }
 }

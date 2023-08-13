@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs';
+import {
+  AccountService,
+  type Favorite,
+} from 'src/app/services/account/account.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,7 +16,10 @@ export class TrendingMoviesComponent implements OnInit {
   trendingMovies: any[] = [];
   imagesUrl = environment.imagesUrl;
 
-  constructor(private readonly trendingService: TrendingService) {}
+  constructor(
+    private readonly trendingService: TrendingService,
+    private readonly accountService: AccountService
+  ) {}
 
   ngOnInit() {
     this.trendingService
@@ -29,5 +36,15 @@ export class TrendingMoviesComponent implements OnInit {
       .subscribe(data => {
         this.trendingMovies = data.results;
       });
+  }
+
+  favoriteMovie(movie: any) {
+    console.log(movie, 'movie');
+    const favorite = {
+      media_id: movie.id,
+      media_type: movie.media_type,
+      favorite: true, // todo
+    };
+    this.accountService.addFavorite(favorite).subscribe(data => {});
   }
 }
