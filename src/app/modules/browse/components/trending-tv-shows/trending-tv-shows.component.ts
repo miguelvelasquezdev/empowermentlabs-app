@@ -22,15 +22,15 @@ export class TrendingTvShowsComponent implements OnInit {
     this.trendingService
       .getTVShows()
       .pipe(
-        map(data => {
+        map((data: any) => {
           data.results.forEach((trendingTVShow: any) => {
             trendingTVShow.poster_path = `${this.imagesUrl}/${trendingTVShow.poster_path}`;
           });
           return data;
         }),
-        mergeMap(data =>
+        mergeMap((data: any) =>
           this.accountService.getFavoriteTVShows().pipe(
-            map(favorites => {
+            map((favorites: any) => {
               favorites.results.forEach((favorite: any) => {
                 const movie = data.results.find(
                   (movie: any) => movie.id === favorite.id
@@ -44,7 +44,7 @@ export class TrendingTvShowsComponent implements OnInit {
           )
         )
       )
-      .subscribe(data => {
+      .subscribe((data: any) => {
         this.trendingTVShows = data.results;
       });
   }

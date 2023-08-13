@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@angular/animations':
-    specifier: ^14.0.0
-    version: 14.0.0(@angular/core@14.0.0)
   '@angular/cdk':
     specifier: 14.2.7
     version: 14.2.7(@angular/common@14.0.0)(@angular/core@14.0.0)(rxjs@7.5.0)
