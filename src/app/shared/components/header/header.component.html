@@ -1,14 +1,19 @@
 <div
   class="fixed w-full flex justify-between items-center p-4 bg-zinc-800 border-b border-zinc-700">
-  <a href="/browse" class="text-2xl font-semibold">Empowerment Labs App</a>
+  <div [routerLink]="['/']" class="text-2xl font-semibold">
+    Empowerment Labs App
+  </div>
   <span class="example-spacer"></span>
-  <a *ngIf="!supabase._session" href="/auth" class="text-md cursor-pointer">
+  <div
+    *ngIf="!supabase._session"
+    [routerLink]="['/auth']"
+    class="text-md cursor-pointer">
     Sign Up
-  </a>
-  <a *ngIf="supabase._session" href="/account">
+  </div>
+  <div *ngIf="supabase._session" [routerLink]="['/account']">
     <mat-icon
       aria-hidden="false"
       aria-label="Example home icon"
       fontIcon="account_circle"></mat-icon>
-  </a>
+  </div>
 </div>

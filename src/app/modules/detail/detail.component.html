@@ -40,8 +40,13 @@
       </div>
     </div>
 
-    <div *ngIf="false" class="flex flex-col w-full items-center p-4">
-      <span class="text-2xl font-semibold">My Notes</span>
+    <div class="flex flex-col w-full items-center p-4 gap-y-2">
+      <span class="text-2xl font-semibold py-2">My Notes</span>
+      <ul>
+        <li *ngFor="let note of notes">
+          {{ note.text }}
+        </li>
+      </ul>
     </div>
   </ng-container>
 </div>

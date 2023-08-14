@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MoviesService } from 'src/app/services/movies/movies.service';
 import { SupabaseService } from 'src/app/services/supabase/supabase.service';
+import { Note } from 'src/app/types/notes';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -15,6 +16,7 @@ export class DetailComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
   detail: any = null;
   note = new FormControl<string>('');
+  notes: Note[] = [];
 
   constructor(
     public supabase: SupabaseService,
@@ -37,10 +39,21 @@ export class DetailComponent implements OnInit {
         )
         .subscribe(async detail => {
           this.detail = detail;
-          console.log(
-            await this.supabase.getNotes(userId!, this.detail.id),
-            'response'
-          );
+
+          if (userId) {
+            const { error, data } = await this.supabase.getNotes(
+              userId!,
+              this.detail.id
+            );
+
+            if (error) {
+              throw Error(
+                'Something wrod has happened trying to retreive the notes'
+              );
+            }
+
+            this.notes = data as Note[];
+          }
         });
     });
   }
