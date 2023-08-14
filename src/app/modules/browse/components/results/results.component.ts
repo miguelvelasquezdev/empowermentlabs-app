@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { concat, concatMap, concatWith, forkJoin, map, mergeMap } from 'rxjs';
+import { catchError, forkJoin, map, mergeMap, of } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
 import { SearchService } from 'src/app/services/search/search.service';
 import { environment } from 'src/environments/environment';
@@ -44,6 +44,7 @@ export class ResultsComponent implements OnChanges {
       }),
       mergeMap(data =>
         this.accountService.getFavoriteMovies().pipe(
+          catchError(() => of({ results: [] })),
           map(favorites => {
             favorites.results.forEach((favorite: any) => {
               const movie = data.results.find(
@@ -54,7 +55,8 @@ export class ResultsComponent implements OnChanges {
               }
             });
             return data;
-          })
+          }),
+          catchError(() => of([]))
         )
       )
     );
@@ -74,6 +76,7 @@ export class ResultsComponent implements OnChanges {
       }),
       mergeMap(data =>
         this.accountService.getFavoriteTVShows().pipe(
+          catchError(() => of({ results: [] })),
           map(favorites => {
             favorites.results.forEach((favorite: any) => {
               const movie = data.results.find(

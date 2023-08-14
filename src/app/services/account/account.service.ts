@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { throwError } from 'rxjs';
 
 export type Favorite = {
   media_type: string;
@@ -33,7 +34,7 @@ export class AccountService {
   getFavoriteMovies() {
     const guestSessionId = localStorage.getItem('guest_session_id');
     if (!guestSessionId) {
-      throw Error('User is not signed out');
+      return throwError(() => new Error('User is not signed out'));
     }
     return this.http.get<any>(
       `${this.accountUrl}/${guestSessionId}/favorite/movies?language=en-US&page=1&sort_by=created_at.asc`
@@ -43,7 +44,7 @@ export class AccountService {
   getFavoriteTVShows() {
     const guestSessionId = localStorage.getItem('guest_session_id');
     if (!guestSessionId) {
-      throw Error('User is not signed out');
+      return throwError(() => new Error('User is not signed out'));
     }
     return this.http.get<any>(
       `${this.accountUrl}/${guestSessionId}/favorite/tv?language=en-US&page=1&sort_by=created_at.asc`

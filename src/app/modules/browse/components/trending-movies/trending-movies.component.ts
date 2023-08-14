@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { flatMap, map, merge, mergeMap, toArray } from 'rxjs';
+import { catchError, map, mergeMap, of } from 'rxjs';
 import {
   AccountService,
   type Favorite,
@@ -34,6 +34,9 @@ export class TrendingMoviesComponent implements OnInit {
         }),
         mergeMap(data =>
           this.accountService.getFavoriteMovies().pipe(
+            catchError(() => {
+              return of({ results: [] });
+            }),
             map(favorites => {
               favorites.results.forEach((favorite: any) => {
                 const movie = data.results.find(
