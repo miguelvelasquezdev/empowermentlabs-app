@@ -17,7 +17,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(uuidv4(), 'hey');
     this.supabase.authChanges(async (_, session) => {
       try {
         if (session) {
