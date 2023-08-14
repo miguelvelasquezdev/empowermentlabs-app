@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -12,17 +11,14 @@ export class HeaderComponent {
 
   constructor(
     private readonly authService: AuthService,
-    private activateRoute: ActivatedRoute,
-    private readonly router: Router
   ) {
-    this.activateRoute.paramMap.subscribe(obs => {});
     this.guestSessionId = localStorage.getItem('guest_session_id');
   }
 
   signInAsGuest() {
     this.authService.createGuestSession().subscribe(async data => {
       if (!localStorage.getItem('guest_session_id')) {
-        localStorage.setItem('guest_session_id', data.session_id);
+        localStorage.setItem('guest_session_id', data.guest_session_id);
         this.guestSessionId = data.guest_session_id;
       }
     });

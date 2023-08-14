@@ -11,7 +11,7 @@
       <span class="font-semibold">{{ trendingTVShow.name }}</span>
       <button
         *ngIf="!trendingTVShow.favorite"
-        (click)="favoriteMovie(trendingTVShow); $event.stopPropagation()">
+        (click)="favoriteTVShow(trendingTVShow); $event.stopPropagation()">
         <mat-icon
           class="material-icons-outlined"
           aria-hidden="false"
@@ -20,7 +20,7 @@
       </button>
       <button
         *ngIf="trendingTVShow.favorite"
-        (click)="favoriteMovie(trendingTVShow); $event.stopPropagation()">
+        (click)="favoriteTVShow(trendingTVShow); $event.stopPropagation()">
         <mat-icon
           class="material-icons-outlined"
           aria-hidden="false"

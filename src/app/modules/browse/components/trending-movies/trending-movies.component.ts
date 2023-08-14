@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { catchError, map, mergeMap, of } from 'rxjs';
-import {
-  AccountService,
-  type Favorite,
-} from 'src/app/services/account/account.service';
+import { AccountService } from 'src/app/services/account/account.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
+import { MovieResult } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -13,7 +11,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./trending-movies.component.css'],
 })
 export class TrendingMoviesComponent implements OnInit {
-  trendingMovies: any[] = [];
+  trendingMovies: MovieResult[] = [];
   imagesUrl = environment.imagesUrl;
 
   constructor(
@@ -26,7 +24,7 @@ export class TrendingMoviesComponent implements OnInit {
       .getMovies()
       .pipe(
         map(data => {
-          data.results.forEach((trendingMovie: any) => {
+          data.results.forEach(trendingMovie => {
             trendingMovie.poster_path = `${this.imagesUrl}/${trendingMovie.poster_path}`;
             trendingMovie.favorite = false;
           });
@@ -38,9 +36,9 @@ export class TrendingMoviesComponent implements OnInit {
               return of({ results: [] });
             }),
             map(favorites => {
-              favorites.results.forEach((favorite: any) => {
+              favorites.results.forEach(favorite => {
                 const movie = data.results.find(
-                  (movie: any) => movie.id === favorite.id
+                  movie => movie.id === favorite.id
                 );
                 if (movie) {
                   movie.favorite = true;
@@ -54,7 +52,7 @@ export class TrendingMoviesComponent implements OnInit {
       .subscribe(data => (this.trendingMovies = data.results));
   }
 
-  favoriteMovie(movie: any) {
+  favoriteMovie(movie: MovieResult) {
     movie.favorite = !movie.favorite;
     const favorite = {
       media_id: movie.id,

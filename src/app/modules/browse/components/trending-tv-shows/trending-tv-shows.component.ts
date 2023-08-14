@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { catchError, map, mergeMap, of } from 'rxjs';
+
 import { AccountService } from 'src/app/services/account/account.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
+import { TVShowResult } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -10,7 +12,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./trending-tv-shows.component.css'],
 })
 export class TrendingTvShowsComponent implements OnInit {
-  trendingTVShows: any[] = [];
+  trendingTVShows: TVShowResult[] = [];
   imagesUrl = environment.imagesUrl;
 
   constructor(
@@ -22,21 +24,21 @@ export class TrendingTvShowsComponent implements OnInit {
     this.trendingService
       .getTVShows()
       .pipe(
-        map((data: any) => {
-          data.results.forEach((trendingTVShow: any) => {
+        map(data => {
+          data.results.forEach(trendingTVShow => {
             trendingTVShow.poster_path = `${this.imagesUrl}/${trendingTVShow.poster_path}`;
           });
           return data;
         }),
-        mergeMap((data: any) =>
+        mergeMap(data =>
           this.accountService.getFavoriteTVShows().pipe(
             catchError(() => {
               return of({ results: [] });
             }),
-            map((favorites: any) => {
-              favorites.results.forEach((favorite: any) => {
+            map(favorites => {
+              favorites.results.forEach(favorite => {
                 const movie = data.results.find(
-                  (movie: any) => movie.id === favorite.id
+                  movie => movie.id === favorite.id
                 );
                 if (movie) {
                   movie.favorite = true;
@@ -47,17 +49,17 @@ export class TrendingTvShowsComponent implements OnInit {
           )
         )
       )
-      .subscribe((data: any) => {
+      .subscribe(data => {
         this.trendingTVShows = data.results;
       });
   }
 
-  favoriteMovie(movie: any) {
-    movie.favorite = !movie.favorite;
+  favoriteTVShow(TVShow: TVShowResult) {
+    TVShow.favorite = !TVShow.favorite;
     const favorite = {
-      media_id: movie.id,
-      media_type: movie.media_type,
-      favorite: movie.favorite, // todo
+      media_id: TVShow.id,
+      media_type: TVShow.media_type,
+      favorite: TVShow.favorite, // todo
     };
     this.accountService.addFavorite(favorite).subscribe(data => {});
   }
