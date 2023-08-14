@@ -40,14 +40,20 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  addNote() {
-    const userId = this.supabase.session?.user.id;
-    if (!userId) {
-      throw Error('User is not signed out');
+  async addNote() {
+    try {
+      const userId = this.supabase.session?.user.id;
+      if (!userId) {
+        throw Error('User is not signed out');
+      }
+      if (!this.note.value) {
+        throw Error('The note must have at least 1 character');
+      }
+      await this.supabase.addNote(userId, this.note.value);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err.message);
+      }
     }
-    if (!this.note.value) {
-      throw Error('The note must have at least 1 character');
-    }
-    this.supabase.addNote(userId, this.note.value);
   }
 }
