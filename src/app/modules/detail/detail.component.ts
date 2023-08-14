@@ -24,7 +24,6 @@ export class DetailComponent implements OnInit {
 
   ngOnInit(): void {
     const userId = this.supabase.session?.user.id;
-    console.log(this.supabase.getNotes(userId!, this.detail.id));
     this.route.paramMap.subscribe(obs => {
       this.moviesService
         .getMovie(obs.get('id') as string)
@@ -38,6 +37,7 @@ export class DetailComponent implements OnInit {
         )
         .subscribe(detail => {
           this.detail = detail;
+          console.log(this.supabase.getNotes(userId!, this.detail.id));
         });
     });
   }
