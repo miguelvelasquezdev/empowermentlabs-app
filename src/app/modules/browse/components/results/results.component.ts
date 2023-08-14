@@ -3,6 +3,7 @@ import { catchError, forkJoin, map, mergeMap, of } from 'rxjs';
 
 import { AccountService } from 'src/app/services/account/account.service';
 import { SearchService } from 'src/app/services/search/search.service';
+import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 import { MovieResult, Movies } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
 
@@ -14,9 +15,10 @@ import { environment } from 'src/environments/environment';
 export class ResultsComponent implements OnChanges {
   @Input() text = '';
   imagesUrl = environment.imagesUrl;
-  results: MovieResult[] = [];
+  mediaItems: MovieResult[] = [];
 
   constructor(
+    public supabase: SupabaseService,
     private readonly searchService: SearchService,
     private readonly accountService: AccountService
   ) {}
@@ -27,8 +29,11 @@ export class ResultsComponent implements OnChanges {
 
   private searchMovies(text: string) {
     forkJoin([this.getMovies(text), this.getTVShows(text)]).subscribe(
-      ([movies, tvShows]) => {
-        this.results = movies.results.concat(tvShows.results);
+      ([movies$, tvShows$]) => {
+        forkJoin([movies$, tvShows$]).subscribe(([movies, tvShows]) => {
+          this.mediaItems = [];
+          this.mediaItems = movies.results.concat(tvShows.results);
+        });
       }
     );
   }
@@ -44,8 +49,8 @@ export class ResultsComponent implements OnChanges {
         });
         return data;
       }),
-      mergeMap(data =>
-        this.accountService.getFavoriteMovies().pipe(
+      mergeMap(async data =>
+        (await this.accountService.getFavoriteMovies()).pipe(
           catchError(() => of({ results: [] as MovieResult[] } as Movies)),
           map(favorites => {
             favorites.results.forEach(favorite => {
@@ -75,8 +80,8 @@ export class ResultsComponent implements OnChanges {
         });
         return data as unknown as Movies;
       }),
-      mergeMap(data =>
-        this.accountService.getFavoriteTVShows().pipe(
+      mergeMap(async data =>
+        (await this.accountService.getFavoriteTVShows()).pipe(
           catchError(() => of({ results: [] as MovieResult[] } as Movies)),
           map(favorites => {
             favorites.results.forEach(favorite => {
@@ -94,19 +99,17 @@ export class ResultsComponent implements OnChanges {
     );
   }
 
-  favoriteMovie(movie: MovieResult) {
+  async favoriteMedia(mediaItem: MovieResult) {
     const favorite = {
-      media_id: movie.id,
-      media_type: movie.media_type,
-      favorite: !movie.favorite,
+      media_id: mediaItem.id,
+      media_type: mediaItem.media_type,
+      favorite: !mediaItem.favorite,
     };
-    this.accountService.addFavorite(favorite).subscribe({
+    (await this.accountService.addFavorite(favorite)).subscribe({
       next: () => {
-        console.log('eh?');
-        movie.favorite = !movie.favorite;
+        mediaItem.favorite = !mediaItem.favorite;
       },
       error: err => {
-        console.log('here?');
         if (err instanceof Error) {
           throw Error(err.message);
         }

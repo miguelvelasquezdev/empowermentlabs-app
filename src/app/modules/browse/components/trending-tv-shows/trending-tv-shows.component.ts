@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { catchError, map, mergeMap, of } from 'rxjs';
-
 import { AccountService } from 'src/app/services/account/account.service';
+import { SupabaseService } from 'src/app/services/supabase/supabase.service';
+
 import { TrendingService } from 'src/app/services/trending/trending.service';
 import { TVShowResult } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
@@ -16,23 +17,20 @@ export class TrendingTvShowsComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
 
   constructor(
-    private trendingService: TrendingService,
-    private accountService: AccountService
+    public supabase: SupabaseService,
+    private accountService: AccountService,
+    private trendingService: TrendingService
   ) {}
 
   ngOnInit() {
     this.trendingService
       .getTVShows()
       .pipe(
-        map(data => {
-          data.results.forEach(trendingTVShow => {
-            trendingTVShow.poster_path = `${this.imagesUrl}/${trendingTVShow.poster_path}`;
-          });
-          return data;
-        }),
-        mergeMap(data =>
-          this.accountService.getFavoriteTVShows().pipe(
-            catchError(() => {
+        mergeMap(async data => {
+          const favoriteTVShows$ =
+            await this.accountService.getFavoriteTVShows();
+          return favoriteTVShows$.pipe(
+            catchError(err => {
               return of({ results: [] });
             }),
             map(favorites => {
@@ -46,21 +44,34 @@ export class TrendingTvShowsComponent implements OnInit {
               });
               return data;
             })
-          )
-        )
+          );
+        })
       )
-      .subscribe(data => {
-        this.trendingTVShows = data.results;
-      });
+      .subscribe(data =>
+        data
+          .pipe(
+            map(data => {
+              data.results.forEach(trendingTVShow => {
+                trendingTVShow.poster_path = `${this.imagesUrl}/${trendingTVShow.poster_path}`;
+                trendingTVShow.title = trendingTVShow.name;
+              });
+              return data;
+            })
+          )
+          .subscribe(tvShows => {
+            this.trendingTVShows = tvShows.results;
+          })
+      );
   }
 
-  favoriteTVShow(TVShow: TVShowResult) {
-    TVShow.favorite = !TVShow.favorite;
+  async favoriteTVShow(TVShow: TVShowResult) {
     const favorite = {
       media_id: TVShow.id,
       media_type: TVShow.media_type,
-      favorite: TVShow.favorite, // todo
+      favorite: !TVShow.favorite,
     };
-    this.accountService.addFavorite(favorite).subscribe(data => {});
+    (await this.accountService.addFavorite(favorite)).subscribe(data => {
+      TVShow.favorite = !TVShow.favorite;
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 
 @Component({
   selector: 'app-header',
@@ -7,16 +7,6 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  constructor(public authService: AuthService) {
-    console.log();
-  }
-
-  signInAsGuest() {
-    this.authService.createGuestSession().subscribe(async data => {
-      if (!this.authService.sessionId$.value) {
-        localStorage.setItem('guest_session_id', data.guest_session_id);
-        this.authService.sessionId$.next(data.guest_session_id);
-      }
-    });
-  }
+  session = this.supabase.session;
+  constructor(public supabase: SupabaseService) {}
 }

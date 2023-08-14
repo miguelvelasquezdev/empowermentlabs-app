@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -6,12 +6,8 @@ import { FormControl } from '@angular/forms';
   templateUrl: './browse.component.html',
   styleUrls: ['./browse.component.css'],
 })
-export class BrowseComponent implements OnInit {
+export class BrowseComponent {
   search = new FormControl('');
 
   constructor() {}
-
-  ngOnInit(): void {
-    this.search.valueChanges.subscribe(val => console.log(val, 'search'));
-  }
 }

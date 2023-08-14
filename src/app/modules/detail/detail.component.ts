@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MoviesService } from 'src/app/services/movies/movies.service';
+import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -14,6 +15,7 @@ export class DetailComponent implements OnInit {
   detail: any = null;
 
   constructor(
+    public supabase: SupabaseService,
     private route: ActivatedRoute,
     private moviesService: MoviesService
   ) {}

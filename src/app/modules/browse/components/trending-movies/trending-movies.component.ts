@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { catchError, map, mergeMap, of } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
 import { MovieResult } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
@@ -16,7 +16,7 @@ export class TrendingMoviesComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
 
   constructor(
-    public authService: AuthService,
+    public supabase: SupabaseService,
     private readonly trendingService: TrendingService,
     private readonly accountService: AccountService
   ) {}
@@ -32,8 +32,8 @@ export class TrendingMoviesComponent implements OnInit {
           });
           return data;
         }),
-        mergeMap(data =>
-          this.accountService.getFavoriteMovies().pipe(
+        mergeMap(async data =>
+          (await this.accountService.getFavoriteMovies()).pipe(
             catchError(() => {
               return of({ results: [] });
             }),
@@ -51,22 +51,24 @@ export class TrendingMoviesComponent implements OnInit {
           )
         )
       )
-      .subscribe(data => (this.trendingMovies = data.results));
+      .subscribe(data => {
+        data.subscribe(movies => {
+          this.trendingMovies = movies.results;
+        });
+      });
   }
 
-  favoriteMovie(movie: MovieResult) {
+  async favoriteMovie(movie: MovieResult) {
     const favorite = {
       media_id: movie.id,
       media_type: movie.media_type,
       favorite: !movie.favorite,
     };
-    this.accountService.addFavorite(favorite).subscribe({
+    (await this.accountService.addFavorite(favorite)).subscribe({
       next: () => {
-        console.log('eh?');
         movie.favorite = !movie.favorite;
       },
       error: err => {
-        console.log('here?');
         if (err instanceof Error) {
           throw Error(err.message);
         }

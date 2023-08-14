@@ -10,8 +10,6 @@ export class AuthService {
   private readonly authenticationUrl =
     'https://api.themoviedb.org/3/authentication';
 
-  sessionId$ = new BehaviorSubject(localStorage.getItem('guest_session_id'));
-
   constructor(private readonly http: HttpClient) {}
 
   createGuestSession() {

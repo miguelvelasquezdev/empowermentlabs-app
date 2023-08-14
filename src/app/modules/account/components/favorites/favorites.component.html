@@ -1,0 +1,6 @@
+<div class="flex flex-col w-full h-full">
+  <h2>My Favorites</h2>
+  <app-grid
+    [mediaItems]="favorites"
+    (onFavoriteMedia)="favoriteMedia($event)"></app-grid>
+</div>

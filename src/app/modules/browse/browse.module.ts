@@ -9,6 +9,7 @@ import { TrendingTvShowsComponent } from './components/trending-tv-shows/trendin
 import { MatIconModule } from '@angular/material/icon';
 import { ResultsComponent } from './components/results/results.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     MatGridListModule,
     MatIconModule,
+    SharedModule,
   ],
 })
 export class BrowseModule {}

@@ -5,10 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { HeaderComponent } from './components/header/header.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { GridComponent } from './components/grid/grid.component';
+import { BrowseRoutingModule } from '../modules/browse/browse-routing.module';
 
 @NgModule({
-  declarations: [HeaderComponent, NotFoundComponent],
-  imports: [CommonModule, MatToolbarModule, MatIconModule],
-  exports: [HeaderComponent],
+  declarations: [HeaderComponent, NotFoundComponent, GridComponent],
+  imports: [CommonModule, BrowseRoutingModule, MatToolbarModule, MatIconModule],
+  exports: [HeaderComponent, GridComponent, NotFoundComponent],
 })
 export class SharedModule {}
