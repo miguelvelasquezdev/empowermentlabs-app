@@ -78,9 +78,16 @@ export class SupabaseService {
   }
 
   addNote(userId: string, text: string) {
+    const randomNumber = this.getRandomNumber(0, 9999999);
     return this.supabase.from('notes').insert({
+      id: randomNumber,
       userId,
       text,
+      created_at: new Date(),
     });
+  }
+
+  getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min) + min);
   }
 }

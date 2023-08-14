@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
 import { AuthService } from './services/auth/auth.service';
 import { SupabaseService } from './services/supabase/supabase.service';
 
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(uuidv4(), 'hey');
     this.supabase.authChanges(async (_, session) => {
       try {
         if (session) {
