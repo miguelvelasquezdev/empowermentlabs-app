@@ -24,28 +24,7 @@ export class AuthComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.supabase.authChanges(async (_, session) => {
-      this.session = session;
-      if (session) {
-        const user = session.user;
-        const profile = await this.supabase.profile(session.user);
-
-        if (!profile.data?.session_id) {
-          this.authService.createGuestSession().subscribe(async data => {
-            const { error: updateError, data: other } =
-              await this.supabase.updateProfile({
-                id: user.id,
-                username: 'miguel',
-                website: '',
-                avatar_url: '',
-                session_id: data.guest_session_id,
-              });
-
-            if (updateError) throw updateError;
-          });
-        }
-      }
-    });
+    this.supabase.authChanges(async (_, session) => (this.session = session));
   }
 
   async onSubmit(): Promise<void> {

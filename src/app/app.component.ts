@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
               const { error: updateError, data: other } =
                 await this.supabase.updateProfile({
                   id: user.id,
-                  username: 'miguel',
+                  username: 'temporal_username',
                   website: '',
                   avatar_url: '',
                   session_id: data.guest_session_id,
