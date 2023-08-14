@@ -77,12 +77,12 @@ export class SupabaseService {
     return this.supabase.storage.from('avatars').upload(filePath, file);
   }
 
-  addNote(userId: string, mediaId: string, text: string) {
+  addNote(user_id: string, media_id: string, text: string) {
     const randomNumber = this.getRandomNumber(0, 9999999);
     return this.supabase.from('notes').insert({
       id: randomNumber,
-      userId,
-      mediaId,
+      user_id,
+      media_id,
       text,
       created_at: new Date(),
     });
@@ -92,7 +92,7 @@ export class SupabaseService {
     return this.supabase
       .from('notes')
       .select()
-      .eq('userId', userId)
+      .eq('user_id', userId)
       .eq('media_id', mediaId);
   }
 
