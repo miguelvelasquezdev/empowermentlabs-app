@@ -76,4 +76,11 @@ export class SupabaseService {
   uploadAvatar(filePath: string, file: File) {
     return this.supabase.storage.from('avatars').upload(filePath, file);
   }
+
+  addNote(userId: string, text: string) {
+    return this.supabase.from('notes').insert({
+      userId,
+      text,
+    });
+  }
 }

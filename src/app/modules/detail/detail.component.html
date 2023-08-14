@@ -31,7 +31,9 @@
         class="p-2 rounded-md bg-transparent border border-zinc-600 outline-none resize-none"
         type="text"></textarea>
       <div class="flex w-full justify-center">
-        <button class="bg-white font-semibold text-black rounded-md p-2">
+        <button
+          (click)="addNote()"
+          class="bg-white font-semibold text-black rounded-md p-2">
           Add Note
         </button>
       </div>

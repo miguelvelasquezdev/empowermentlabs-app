@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MoviesService } from 'src/app/services/movies/movies.service';
@@ -13,6 +14,7 @@ import { environment } from 'src/environments/environment';
 export class DetailComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
   detail: any = null;
+  note = new FormControl<string>('');
 
   constructor(
     public supabase: SupabaseService,
@@ -36,5 +38,16 @@ export class DetailComponent implements OnInit {
           this.detail = detail;
         });
     });
+  }
+
+  addNote() {
+    const userId = this.supabase.session?.user.id;
+    if (!userId) {
+      throw Error('User is not signed out');
+    }
+    if (!this.note.value) {
+      throw Error('The note must have at least 1 character');
+    }
+    this.supabase.addNote(userId, this.note.value);
   }
 }
