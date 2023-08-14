@@ -88,8 +88,8 @@ export class SupabaseService {
     });
   }
 
-  async getNotes(userId: string, mediaId: string) {
-    return await this.supabase
+  getNotes(userId: string, mediaId: string) {
+    return this.supabase
       .from('notes')
       .select()
       .eq('userId', userId)

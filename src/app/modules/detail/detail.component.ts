@@ -35,9 +35,12 @@ export class DetailComponent implements OnInit {
             return detail;
           })
         )
-        .subscribe(detail => {
+        .subscribe(async detail => {
           this.detail = detail;
-          console.log(this.supabase.getNotes(userId!, this.detail.id));
+          console.log(
+            await this.supabase.getNotes(userId!, this.detail.id),
+            'response'
+          );
         });
     });
   }
