@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin, mergeMap, throwError } from 'rxjs';
+import { forkJoin, map, mergeMap, throwError } from 'rxjs';
 
 import { AccountService } from 'src/app/services/account/account.service';
 import { SupabaseService } from 'src/app/services/supabase/supabase.service';
-import { MovieResult } from 'src/app/types/shared';
+import { MovieResult, Movies } from 'src/app/types/shared';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-favorites',
@@ -12,6 +13,7 @@ import { MovieResult } from 'src/app/types/shared';
 })
 export class FavoritesComponent implements OnInit {
   favorites: MovieResult[] = [];
+  imagesUrl = environment.imagesUrl;
 
   constructor(
     private accountService: AccountService,
@@ -22,13 +24,28 @@ export class FavoritesComponent implements OnInit {
     const sessionId = await this.validateUser();
     forkJoin([
       await this.accountService.getFavoriteMovies(sessionId),
-      await this.accountService.getFavoriteTVShows(sessionId),
-    ]).subscribe(([movies, tvShows]) => {
-      this.favorites = [];
-      this.favorites = movies.results.concat(
-        tvShows.results as unknown as MovieResult[]
-      );
-    });
+      (await this.accountService.getFavoriteTVShows(sessionId)).pipe(
+        map(data => {
+          data.results.forEach(tvShow => {
+            tvShow.title = tvShow.name;
+          });
+          return data as unknown as Movies;
+        })
+      ),
+    ])
+      .pipe(
+        map(([movies, tvShows]) => {
+          const media = movies.results.concat(tvShows.results).map(media => {
+            media.poster_path = `${this.imagesUrl}/${media.poster_path}`;
+            return media;
+          });
+
+          return media;
+        })
+      )
+      .subscribe(media => {
+        this.favorites = media;
+      });
   }
 
   async favoriteMedia(mediaItem: MovieResult) {
