@@ -95,12 +95,22 @@ export class ResultsComponent implements OnChanges {
   }
 
   favoriteMovie(movie: MovieResult) {
-    movie.favorite = !movie.favorite;
     const favorite = {
       media_id: movie.id,
       media_type: movie.media_type,
-      favorite: movie.favorite, // todo
+      favorite: !movie.favorite,
     };
-    this.accountService.addFavorite(favorite).subscribe(data => {});
+    this.accountService.addFavorite(favorite).subscribe({
+      next: () => {
+        console.log('eh?');
+        movie.favorite = !movie.favorite;
+      },
+      error: err => {
+        console.log('here?');
+        if (err instanceof Error) {
+          throw Error(err.message);
+        }
+      },
+    });
   }
 }

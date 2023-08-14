@@ -6,24 +6,26 @@
     <img class="w-full rounded-t-md" [src]="trendingMovie.poster_path" alt="" />
     <div class="flex justify-between items-center p-2">
       <span class="font-semibold">{{ trendingMovie.title }}</span>
-      <button
-        *ngIf="!trendingMovie.favorite"
-        (click)="favoriteMovie(trendingMovie); $event.stopPropagation()">
-        <mat-icon
-          class="material-icons-outlined"
-          aria-hidden="false"
-          aria-label="Example home icon"
-          fontIcon="star_outlined"></mat-icon>
-      </button>
-      <button
-        *ngIf="trendingMovie.favorite"
-        (click)="favoriteMovie(trendingMovie); $event.stopPropagation()">
-        <mat-icon
-          class="material-icons-outlined"
-          aria-hidden="false"
-          aria-label="Example home icon"
-          fontIcon="star"></mat-icon>
-      </button>
+      <ng-container *ngIf="authService.sessionId$ | async">
+        <button
+          *ngIf="!trendingMovie.favorite"
+          (click)="favoriteMovie(trendingMovie); $event.stopPropagation()">
+          <mat-icon
+            class="material-icons-outlined"
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="star_outlined"></mat-icon>
+        </button>
+        <button
+          *ngIf="trendingMovie.favorite"
+          (click)="favoriteMovie(trendingMovie); $event.stopPropagation()">
+          <mat-icon
+            class="material-icons-outlined"
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="star"></mat-icon>
+        </button>
+      </ng-container>
     </div>
   </div>
 </div>

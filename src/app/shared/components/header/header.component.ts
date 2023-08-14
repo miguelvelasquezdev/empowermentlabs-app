@@ -7,19 +7,15 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  guestSessionId: string | null = '';
-
-  constructor(
-    private readonly authService: AuthService,
-  ) {
-    this.guestSessionId = localStorage.getItem('guest_session_id');
+  constructor(public authService: AuthService) {
+    console.log();
   }
 
   signInAsGuest() {
     this.authService.createGuestSession().subscribe(async data => {
-      if (!localStorage.getItem('guest_session_id')) {
+      if (!this.authService.sessionId$.value) {
         localStorage.setItem('guest_session_id', data.guest_session_id);
-        this.guestSessionId = data.guest_session_id;
+        this.authService.sessionId$.next(data.guest_session_id);
       }
     });
   }

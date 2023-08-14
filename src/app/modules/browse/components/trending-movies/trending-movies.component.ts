@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { catchError, map, mergeMap, of } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
 import { MovieResult } from 'src/app/types/shared';
 import { environment } from 'src/environments/environment';
@@ -15,6 +16,7 @@ export class TrendingMoviesComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
 
   constructor(
+    public authService: AuthService,
     private readonly trendingService: TrendingService,
     private readonly accountService: AccountService
   ) {}
@@ -53,12 +55,22 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   favoriteMovie(movie: MovieResult) {
-    movie.favorite = !movie.favorite;
     const favorite = {
       media_id: movie.id,
       media_type: movie.media_type,
-      favorite: movie.favorite, // todo
+      favorite: !movie.favorite,
     };
-    this.accountService.addFavorite(favorite).subscribe(data => {});
+    this.accountService.addFavorite(favorite).subscribe({
+      next: () => {
+        console.log('eh?');
+        movie.favorite = !movie.favorite;
+      },
+      error: err => {
+        console.log('here?');
+        if (err instanceof Error) {
+          throw Error(err.message);
+        }
+      },
+    });
   }
 }

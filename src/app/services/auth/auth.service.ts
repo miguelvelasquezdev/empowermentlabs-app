@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { GuestSessionResponse } from 'src/app/types/auth';
 
 @Injectable({
@@ -8,6 +9,8 @@ import { GuestSessionResponse } from 'src/app/types/auth';
 export class AuthService {
   private readonly authenticationUrl =
     'https://api.themoviedb.org/3/authentication';
+
+  sessionId$ = new BehaviorSubject(localStorage.getItem('guest_session_id'));
 
   constructor(private readonly http: HttpClient) {}
 
