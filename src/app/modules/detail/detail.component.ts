@@ -23,6 +23,8 @@ export class DetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const userId = this.supabase.session?.user.id;
+    console.log(this.supabase.getNotes(userId!, this.detail.id));
     this.route.paramMap.subscribe(obs => {
       this.moviesService
         .getMovie(obs.get('id') as string)
@@ -40,7 +42,7 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  async addNote() {
+  async addNote(mediaId: string) {
     try {
       const userId = this.supabase.session?.user.id;
       if (!userId) {
@@ -49,7 +51,7 @@ export class DetailComponent implements OnInit {
       if (!this.note.value) {
         throw Error('The note must have at least 1 character');
       }
-      await this.supabase.addNote(userId, this.note.value);
+      await this.supabase.addNote(userId, mediaId, this.note.value);
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);

@@ -77,17 +77,26 @@ export class SupabaseService {
     return this.supabase.storage.from('avatars').upload(filePath, file);
   }
 
-  addNote(userId: string, text: string) {
+  addNote(userId: string, mediaId: string, text: string) {
     const randomNumber = this.getRandomNumber(0, 9999999);
     return this.supabase.from('notes').insert({
       id: randomNumber,
       userId,
+      mediaId,
       text,
       created_at: new Date(),
     });
   }
 
-  getRandomNumber(min: number, max: number) {
+  async getNotes(userId: string, mediaId: string) {
+    return await this.supabase
+      .from('notes')
+      .select()
+      .eq('userId', userId)
+      .eq('mediaId', mediaId);
+  }
+
+  private getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min);
   }
 }
