@@ -16,7 +16,7 @@ export class DetailComponent implements OnInit {
   imagesUrl = environment.imagesUrl;
   detail: any = null;
   note = new FormControl<string>('');
-  notes: Note[] = [];
+  notes: Partial<Note>[] = [];
 
   constructor(
     public supabase: SupabaseService,
@@ -68,6 +68,9 @@ export class DetailComponent implements OnInit {
         throw Error('The note must have at least 1 character');
       }
       await this.supabase.addNote(userId, mediaId, this.note.value);
+      this.notes.push({
+        text: this.note.value,
+      });
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);

@@ -1,6 +1,6 @@
 <div
   class="fixed w-full flex justify-between items-center p-4 bg-zinc-800 border-b border-zinc-700">
-  <div [routerLink]="['/']" class="text-2xl font-semibold">
+  <div [routerLink]="['/']" class="text-2xl font-semibold cursor-pointer">
     Empowerment Labs App
   </div>
   <span class="example-spacer"></span>
@@ -10,7 +10,10 @@
     class="text-md cursor-pointer">
     Sign Up
   </div>
-  <div *ngIf="supabase._session" [routerLink]="['/account']">
+  <div
+    class="cursor-pointer"
+    *ngIf="supabase._session"
+    [routerLink]="['/account']">
     <mat-icon
       aria-hidden="false"
       aria-label="Example home icon"
