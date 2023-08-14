@@ -93,7 +93,7 @@ export class SupabaseService {
       .from('notes')
       .select()
       .eq('userId', userId)
-      .eq('mediaId', mediaId);
+      .eq('media_id', mediaId);
   }
 
   private getRandomNumber(min: number, max: number) {
