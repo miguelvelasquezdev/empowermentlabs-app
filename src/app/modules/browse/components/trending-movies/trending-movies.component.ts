@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, throwError } from 'rxjs';
+
 import { AccountService } from 'src/app/services/account/account.service';
 import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 import { TrendingService } from 'src/app/services/trending/trending.service';
@@ -21,7 +22,8 @@ export class TrendingMoviesComponent implements OnInit {
     private readonly accountService: AccountService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const sessionId = await this.validateUser();
     this.trendingService
       .getMovies()
       .pipe(
@@ -33,7 +35,7 @@ export class TrendingMoviesComponent implements OnInit {
           return data;
         }),
         mergeMap(async data =>
-          (await this.accountService.getFavoriteMovies()).pipe(
+          (await this.accountService.getFavoriteMovies(sessionId)).pipe(
             catchError(() => {
               return of({ results: [] });
             }),
@@ -59,12 +61,13 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   async favoriteMovie(movie: MovieResult) {
+    const sessionId = await this.validateUser();
     const favorite = {
       media_id: movie.id,
       media_type: movie.media_type,
       favorite: !movie.favorite,
     };
-    (await this.accountService.addFavorite(favorite)).subscribe({
+    (await this.accountService.addFavorite(favorite, sessionId)).subscribe({
       next: () => {
         movie.favorite = !movie.favorite;
       },
@@ -74,5 +77,20 @@ export class TrendingMoviesComponent implements OnInit {
         }
       },
     });
+  }
+
+  private async validateUser() {
+    if (!this.supabase.session?.user) {
+      return throwError(() => new Error('User is not signed out'));
+    }
+    const sessionId = (await this.supabase.profile(this.supabase.session.user))
+      .data?.session_id;
+
+    if (!sessionId) {
+      return throwError(
+        () => new Error('Something wrong has happened trying to log in')
+      );
+    }
+    return sessionId;
   }
 }

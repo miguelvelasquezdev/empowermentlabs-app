@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, throwError } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
 import { SupabaseService } from 'src/app/services/supabase/supabase.service';
 
@@ -22,13 +22,15 @@ export class TrendingTvShowsComponent implements OnInit {
     private trendingService: TrendingService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const sessionId = await this.validateUser();
     this.trendingService
       .getTVShows()
       .pipe(
         mergeMap(async data => {
-          const favoriteTVShows$ =
-            await this.accountService.getFavoriteTVShows();
+          const favoriteTVShows$ = await this.accountService.getFavoriteTVShows(
+            sessionId
+          );
           return favoriteTVShows$.pipe(
             catchError(err => {
               return of({ results: [] });
@@ -65,13 +67,32 @@ export class TrendingTvShowsComponent implements OnInit {
   }
 
   async favoriteTVShow(TVShow: TVShowResult) {
+    const sessionId = await this.validateUser();
+
     const favorite = {
       media_id: TVShow.id,
       media_type: TVShow.media_type,
       favorite: !TVShow.favorite,
     };
-    (await this.accountService.addFavorite(favorite)).subscribe(data => {
-      TVShow.favorite = !TVShow.favorite;
-    });
+    (await this.accountService.addFavorite(favorite, sessionId)).subscribe(
+      data => {
+        TVShow.favorite = !TVShow.favorite;
+      }
+    );
+  }
+
+  private async validateUser() {
+    if (!this.supabase.session?.user) {
+      return throwError(() => new Error('User is not signed out'));
+    }
+    const sessionId = (await this.supabase.profile(this.supabase.session.user))
+      .data?.session_id;
+
+    if (!sessionId) {
+      return throwError(
+        () => new Error('Something wrong has happened trying to log in')
+      );
+    }
+    return sessionId;
   }
 }

@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
 
 import { FavoriteResponse } from 'src/app/types/account';
 import { Movies, TVShows } from 'src/app/types/shared';
@@ -25,18 +24,7 @@ export class AccountService {
     private readonly authService: AuthService
   ) {}
 
-  async addFavorite(favorite: Favorite) {
-    if (!this.supabase.session?.user) {
-      return throwError(() => new Error('User is not signed out'));
-    }
-    const sessionId = (await this.supabase.profile(this.supabase.session.user))
-      .data?.session_id;
-
-    if (!sessionId) {
-      return throwError(
-        () => new Error('Something wrong has happened trying to log in')
-      );
-    }
+  async addFavorite(favorite: Favorite, sessionId: string) {
     return this.http.post<FavoriteResponse>(
       `${this.accountUrl}/${sessionId}/favorite`,
       {
@@ -47,36 +35,13 @@ export class AccountService {
     );
   }
 
-  async getFavoriteMovies() {
-    if (!this.supabase.session?.user) {
-      return throwError(() => new Error('User is not signed out'));
-    }
-    const sessionId = (await this.supabase.profile(this.supabase.session.user))
-      .data?.session_id;
-
-    if (!sessionId) {
-      return throwError(
-        () => new Error('Something wrong has happened trying to log in')
-      );
-    }
+  async getFavoriteMovies(sessionId: string) {
     return this.http.get<Movies>(
       `${this.accountUrl}/${sessionId}/favorite/movies?language=en-US&page=1&sort_by=created_at.asc`
     );
   }
 
-  async getFavoriteTVShows() {
-    if (!this.supabase.session?.user) {
-      return throwError(() => new Error('User is not signed out'));
-    }
-    const sessionId = (await this.supabase.profile(this.supabase.session.user))
-      .data?.session_id;
-
-    if (!sessionId) {
-      return throwError(
-        () => new Error('Something wrong has happened trying to log in')
-      );
-    }
-
+  async getFavoriteTVShows(sessionId: string) {
     return this.http.get<TVShows>(
       `${this.accountUrl}/${sessionId}/favorite/tv?language=en-US&page=1&sort_by=created_at.asc`
     );

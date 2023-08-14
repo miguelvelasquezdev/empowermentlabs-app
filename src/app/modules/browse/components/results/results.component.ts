@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { catchError, forkJoin, map, mergeMap, of } from 'rxjs';
+import { catchError, forkJoin, map, mergeMap, of, throwError } from 'rxjs';
 
 import { AccountService } from 'src/app/services/account/account.service';
 import { SearchService } from 'src/app/services/search/search.service';
@@ -27,18 +27,21 @@ export class ResultsComponent implements OnChanges {
     this.searchMovies(changes['text'].currentValue);
   }
 
-  private searchMovies(text: string) {
-    forkJoin([this.getMovies(text), this.getTVShows(text)]).subscribe(
-      ([movies$, tvShows$]) => {
-        forkJoin([movies$, tvShows$]).subscribe(([movies, tvShows]) => {
-          this.mediaItems = [];
-          this.mediaItems = movies.results.concat(tvShows.results);
-        });
-      }
-    );
+  private async searchMovies(text: string) {
+    const sessionId = await this.validateUser();
+    forkJoin([
+      await this.getMovies(text),
+      await this.getTVShows(text),
+    ]).subscribe(([movies$, tvShows$]) => {
+      forkJoin([movies$, tvShows$]).subscribe(([movies, tvShows]) => {
+        this.mediaItems = [];
+        this.mediaItems = movies.results.concat(tvShows.results);
+      });
+    });
   }
 
-  private getMovies(text: string) {
+  private async getMovies(text: string) {
+    const sessionId = await this.validateUser();
     return this.searchService.searchMovies(text).pipe(
       map(data => {
         data.results.forEach(movie => {
@@ -50,7 +53,7 @@ export class ResultsComponent implements OnChanges {
         return data;
       }),
       mergeMap(async data =>
-        (await this.accountService.getFavoriteMovies()).pipe(
+        (await this.accountService.getFavoriteMovies(sessionId)).pipe(
           catchError(() => of({ results: [] as MovieResult[] } as Movies)),
           map(favorites => {
             favorites.results.forEach(favorite => {
@@ -68,7 +71,8 @@ export class ResultsComponent implements OnChanges {
     );
   }
 
-  private getTVShows(text: string) {
+  private async getTVShows(text: string) {
+    const sessionId = await this.validateUser();
     return this.searchService.searchTVShows(text).pipe(
       map(data => {
         data.results.forEach(tvShow => {
@@ -81,7 +85,7 @@ export class ResultsComponent implements OnChanges {
         return data as unknown as Movies;
       }),
       mergeMap(async data =>
-        (await this.accountService.getFavoriteTVShows()).pipe(
+        (await this.accountService.getFavoriteTVShows(sessionId)).pipe(
           catchError(() => of({ results: [] as MovieResult[] } as Movies)),
           map(favorites => {
             favorites.results.forEach(favorite => {
@@ -100,12 +104,13 @@ export class ResultsComponent implements OnChanges {
   }
 
   async favoriteMedia(mediaItem: MovieResult) {
+    const sessionId = await this.validateUser();
     const favorite = {
       media_id: mediaItem.id,
       media_type: mediaItem.media_type,
       favorite: !mediaItem.favorite,
     };
-    (await this.accountService.addFavorite(favorite)).subscribe({
+    (await this.accountService.addFavorite(favorite, sessionId)).subscribe({
       next: () => {
         mediaItem.favorite = !mediaItem.favorite;
       },
@@ -115,5 +120,20 @@ export class ResultsComponent implements OnChanges {
         }
       },
     });
+  }
+
+  private async validateUser() {
+    if (!this.supabase.session?.user) {
+      return throwError(() => new Error('User is not signed out'));
+    }
+    const sessionId = (await this.supabase.profile(this.supabase.session.user))
+      .data?.session_id;
+
+    if (!sessionId) {
+      return throwError(
+        () => new Error('Something wrong has happened trying to log in')
+      );
+    }
+    return sessionId;
   }
 }
